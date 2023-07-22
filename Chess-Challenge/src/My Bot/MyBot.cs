@@ -13,6 +13,13 @@ public class MyBot : IChessBot
             {
                 return move;
             }
+            else if (MoveIsCheck(board, move))
+            {
+                if (!board.SquareIsAttackedByOpponent(move.TargetSquare))
+                {
+                    return move;
+                }
+            }
         }
 
         Random rng = new();
@@ -27,5 +34,14 @@ public class MyBot : IChessBot
         board.UndoMove(move);
 
         return isCheckmate;
+    }
+
+    bool MoveIsCheck(Board board, Move move)
+    {
+        board.MakeMove(move);
+        bool isCheck = board.IsInCheck();
+        board.UndoMove(move);
+
+        return isCheck;
     }
 }
