@@ -3,6 +3,8 @@ using System;
 
 public class MyBot : IChessBot
 {
+    int[] pieceValues = { 0, 100, 300, 300, 500, 900, 10000 };
+
     public Move Think(Board board, Timer timer)
     {
         Move[] legalMoves = board.GetLegalMoves();
@@ -16,6 +18,17 @@ public class MyBot : IChessBot
             else if (MoveIsCheck(board, move))
             {
                 if (!board.SquareIsAttackedByOpponent(move.TargetSquare))
+                {
+                    return move;
+                }
+            }
+            else if (move.IsCapture)
+            {
+                if (!board.SquareIsAttackedByOpponent(move.TargetSquare))
+                {
+                    return move;
+                }
+                else if (pieceValues[(int)move.CapturePieceType] >= pieceValues[(int)move.MovePieceType])
                 {
                     return move;
                 }
