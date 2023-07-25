@@ -1,5 +1,6 @@
 ﻿using ChessChallenge.API;
 using System;
+using System.Collections.Generic;
 
 public class MyBot : IChessBot
 {
@@ -8,6 +9,7 @@ public class MyBot : IChessBot
     public Move Think(Board board, Timer timer)
     {
         Move[] legalMoves = board.GetLegalMoves();
+        List<Move> possibleMoves = new List<Move>(legalMoves);
 
         foreach (Move move in legalMoves)
         {
@@ -33,11 +35,22 @@ public class MyBot : IChessBot
                     return move;
                 }
             }
+            else if (board.SquareIsAttackedByOpponent(move.TargetSquare))
+            {
+                possibleMoves.Remove(move);
+            }
         }
 
         Random rng = new();
 
-        return legalMoves[rng.Next(legalMoves.Length)];
+        if (possibleMoves.Count > 0)
+        {
+            return possibleMoves[rng.Next(possibleMoves.Count)];
+        }
+        else
+        {
+            return legalMoves[rng.Next(legalMoves.Length)];
+        }
     }
 
     bool MoveIsCheckmate(Board board, Move move)
